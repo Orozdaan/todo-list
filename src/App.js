@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.css'
+import Addtodo from './components/Addtodo/Addtodo/Addtodo.js'
+import Todos from './components/Addtodo/Todos/Todos'
+import { useState ,useEffect,useReducer} from 'react'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+	const [todos, setTodos] = useState([])
 
-export default App;
+	const AddtodoHandler = (inputText) => {
+		setTodos((prevState) => {
+			let prevTodos = [...prevState]
+			prevTodos.unshift({
+				text: inputText,
+				id: Math.random().toString(),
+				completed: false,
+				date: new Date().toLocaleDateString(),
+			})
+			return prevTodos
+		})
+	}
+
+	// console.log(todos)
+
+  useEffect(() => {
+    const localData = JSON.parse(localStorage.getItem('data') )
+    setTodos(localData || [])
+  }, []);
+  useEffect(()=>{
+    localStorage.setItem('data' , JSON.stringify(todos))
+  },[todos])
+  
+	return (
+		<div className='App'>
+			<h1 className='todo'>Todo Application</h1>
+			<Addtodo onAddtodo={AddtodoHandler} />
+			<Todos data={todos} setTodos={setTodos} />
+		</div>
+	)
+}
+export default App
